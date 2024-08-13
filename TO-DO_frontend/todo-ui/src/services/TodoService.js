@@ -1,17 +1,30 @@
-import axios from 'axios';
+import axios from "axios";
+import { getToken } from "./AuthService";
 
-const TODO_API_BASE_URL = "http://localhost:8080/api/todos";
+const BASE_REST_API_URL = "http://localhost:8080/api/todos";
 
-export const getAllTodos = () => axios.get(TODO_API_BASE_URL);
+// Add a request interceptor
+axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
 
-export const saveTodo = (todo) => axios.post(TODO_API_BASE_URL, todo);
+    config.headers['Authorization'] = getToken();
 
-export const getTodo = (id) => axios.get(TODO_API_BASE_URL + '/' + id);
+    return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
 
-export const updateTodo = (id, todo) => axios.put(TODO_API_BASE_URL + '/' + id, todo);
+export const getAllTodos = () => axios.get(BASE_REST_API_URL);
 
-export const deleteTodo =(id) => axios.delete(TODO_API_BASE_URL + '/' + id);
+export const saveTodo = (todo) => axios.post(BASE_REST_API_URL, todo);
 
-export const completeTodo = (id) => axios.patch(TODO_API_BASE_URL + '/' + id + '/complete');
+export const getTodo = (id) => axios.get(BASE_REST_API_URL + '/' + id);
 
-export const inCompleteTodo =(id) => axios.patch(TODO_API_BASE_URL + '/' + id + '/in-complete');
+export const updateTodo = (id, todo) => axios.put(BASE_REST_API_URL + '/' + id, todo);
+
+export const deleteTodo = (id) => axios.delete(BASE_REST_API_URL + '/' + id);
+
+export const completeTodo = (id) => axios.patch(BASE_REST_API_URL + '/' + id + '/complete');
+
+export const inCompleteTodo = (id) => axios.patch(BASE_REST_API_URL + '/' + id + '/in-complete');

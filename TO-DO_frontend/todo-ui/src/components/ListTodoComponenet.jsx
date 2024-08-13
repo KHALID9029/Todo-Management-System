@@ -1,67 +1,68 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { completeTodo, deleteTodo, getAllTodos, inCompleteTodo } from '../services/TodoService'
 import { useNavigate } from 'react-router-dom'
 
 const ListTodoComponenet = () => {
 
-    const [todos,setTodos] = useState([])
-    const navigator = useNavigate()
+    const [todos, setTodos] = useState([])
+
+    const navigate = useNavigate()
 
     useEffect(() => {
-        listTodos();
+        listTodos()
     }, [])
 
-    function listTodos(){
+    function listTodos() {
         getAllTodos().then((response) => {
             setTodos(response.data)
         }).catch((error) => {
-            console.error('Error fetching data', error)
+            console.error('Error fetching todos', error)
         })
     }
 
-    function addNewTodo(){
-        navigator('/add-todo')
+    function addNewTodo() {
+        navigate('/add-todo')
     }
 
-    function updateTodo(id){
-        console.log(id)
-        navigator(`/update-todo/${id}`)
+    function updateTodo(id) {
+        console.log('Update Todo with id:', id)
+        navigate(`/update-todo/${id}`)
     }
 
-    function removeTodo(id){
+    function removeTodo (id) {
         deleteTodo(id).then((response) => {
-            console.log(response.data)
+            console.log('Todo Deleted Successfully', response)
             listTodos()
         }).catch((error) => {
-            console.error('Error in deleting todo',error)
+            console.error('Error while deleting Todo', error)
         })
     }
 
-    function markCompleteTodo(id){
+    function markCompleteTodo (id) {
         completeTodo(id).then((response) => {
-            console.log(response.data)
+            console.log('Todo Completed Successfully', response)
+            listTodos()
+        }).catch((error) => {
+            console.error('Error while completing Todo', error)
+        })
+    }
+
+    function markInCompleteTodo (id) {
+        inCompleteTodo(id).then((response) => {
+            console.log('Todo In-Completed Successfully', response)
             listTodos()
         }
         ).catch((error) => {
-            console.error('Error in completing todo',error)
+            console.error('Error while in-completing Todo', error)
         })
     }
 
-    function markInCompleteTodo(id){
-        inCompleteTodo(id).then((response) => {
-            console.log(response.data)
-            listTodos()
-        }).catch((error) => {
-            console.error('Error in in-completing todo',error)
-        })
-    }
 
+   
   return (
     <div className='container'>
-        <h2 className='text-center'>List of To-Do's</h2>
-
-        <button className='btn btn-primary mb-2' onClick={addNewTodo}>Add TO-DO</button>
-
+        <h2 className='text-center'>List of TODO's</h2>
+        <button className='btn btn-primary mb-2' onClick={addNewTodo}>Add Todo</button>
         <div>
             <table className='table table-bordered table-striped'>
                 <thead>
@@ -72,30 +73,27 @@ const ListTodoComponenet = () => {
                         <th>Actions</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {
-                        todos.map(
-                            todo =>
+                        todos.map((todo) => (
                             <tr key={todo.id}>
                                 <td>{todo.title}</td>
                                 <td>{todo.description}</td>
-                                <td>{todo.completed? 'YES':'NO'}</td>
+                                <td>{todo.completed ? 'Yes' : 'No'}</td>
                                 <td>
-                                    <button className='btn btn-info' onClick={()=>updateTodo(todo.id)}>Update</button>
-                                    <button className='btn btn-danger' onClick={()=>removeTodo(todo.id)}
-                                        style={{marginLeft:"10px"}}>Delete</button>
-                                    <button className='btn btn-success' onClick={()=>markCompleteTodo(todo.id)}
-                                        style={{marginLeft:"10px"}}>Complete</button>
-                                    <button className='btn btn-info' onClick={()=>markInCompleteTodo(todo.id)}
-                                        style={{marginLeft:"10px"}}>InComplete</button>
+                                    <button className='btn btn-info' onClick={()=> updateTodo(todo.id)}>Update</button>
+                                    <button className='btn btn-danger' onClick={()=> removeTodo(todo.id)} style={{marginLeft:"10px"}}>Delete</button>
+                                    <button className='btn btn-success' onClick={()=> markCompleteTodo(todo.id)} style={{marginLeft:"10px"}}>Complete</button>
+                                    <button className='btn btn-info' onClick={()=> markInCompleteTodo(todo.id)} style={{marginLeft:"10px"}}>In-Complete</button>
                                 </td>
                             </tr>
-                        )
+                        ))
                     }
                 </tbody>
+
             </table>
         </div>
+
     </div>
   )
 }

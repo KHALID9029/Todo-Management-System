@@ -5,6 +5,7 @@ import net.javaguides.todo.dto.TodoDto;
 import net.javaguides.todo.service.TodoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class TodoController {
 
     // Build Add Todo Rest API
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<TodoDto> addTodo(@RequestBody TodoDto todoDto)
     {
@@ -29,6 +31,7 @@ public class TodoController {
     }
 
     // Build Get Todo By Id Rest API
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/{todoId}")
     public ResponseEntity<TodoDto> getTodo(@PathVariable Long todoId)
     {
@@ -38,6 +41,7 @@ public class TodoController {
     }
 
     // Build Get All Todos Rest API
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping
     public ResponseEntity<List<TodoDto>> getAllTodos()
     {
@@ -48,6 +52,7 @@ public class TodoController {
 
 
     // Build Update Todo Rest API
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{todoId}")
     public ResponseEntity<TodoDto> updateTodo(@RequestBody TodoDto todoDto, @PathVariable Long todoId)
     {
@@ -58,6 +63,7 @@ public class TodoController {
 
 
     // Build Delete Todo Rest API
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{todoId}")
     public ResponseEntity<String> deleteTodo(@PathVariable Long todoId)
     {
@@ -68,6 +74,7 @@ public class TodoController {
 
 
     // Build Complete Todo REST API
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PatchMapping("/{todoId}/complete")
     public ResponseEntity<TodoDto> completeTodo(@PathVariable Long todoId)
     {
@@ -78,6 +85,7 @@ public class TodoController {
 
 
     // Build Incomplete Todo REST API
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PatchMapping("{todoId}/in-complete")
     public ResponseEntity<TodoDto> inCompleteTodo(@PathVariable Long todoId)
     {

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import { saveTodo, getTodo, updateTodo } from '../services/TodoService'
+import { getTodo, saveTodo, updateTodo } from '../services/TodoService'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const TodoComponenet = () => {
@@ -8,51 +8,58 @@ const TodoComponenet = () => {
     const [title,setTitle] = useState('')
     const [description,setDescription] = useState('')
     const [completed,setCompleted] = useState(false)
-    const navigator = useNavigate()
+    const navigate = useNavigate()
     const {id} = useParams()
 
-    function saveOrUpdateTodo(e){
+
+    function saveOrUpdateTodo(e) {
+
         e.preventDefault()
 
         const todo = {title,description,completed}
         console.log(todo)
 
         if(id){
-
             updateTodo(id,todo).then((response) => {
-                console.log(response.data)
-                navigator('/todos')
+                console.log('Todo Updated Successfully', response)
+                navigate('/todos')
             }).catch((error) => {
-                console.error('Error in updating todo',error)
+                console.error('Error while updating Todo', error)
             })
         }else{
             saveTodo(todo).then((response) => {
-                console.log(response.data)
-                navigator('/todos')
+                console.log('Todo Added Successfully', response)
+                navigate('/todos')
             }).catch((error) => {
-                console.error('Error in creating todo',error)
+                console.error('Error while adding Todo', error)
             })
-        }    
+        }
     }
 
+
     function pageTitle(){
-        return id ? <h2 className='text-center'>Update Todo</h2> : <h2 className='text-center'>Add Todo</h2>
+        if(id){
+            return <h2 className='text-center'>Update TODO</h2>
+        }else{
+            return <h2 className='text-center'>Add TODO</h2>
+        }
     }
+
 
     useEffect(() => {
 
         if(id){
             getTodo(id).then((response) => {
-                console.log(response.data)
-                const todo = response.data
-                setTitle(todo.title)
-                setDescription(todo.description)
-                setCompleted(todo.completed)
+                console.log('Todo:', response.data)
+                setTitle(response.data.title)
+                setDescription(response.data.description)
+                setCompleted(response.data.completed)
             }).catch((error) => {
-                console.error('Error in fetching todo',error)
+                console.error('Error fetching todo by id:', error)
             })
         }
-    },[id])
+    }, [id])
+
 
   return (
     <div className='container'>
@@ -67,29 +74,39 @@ const TodoComponenet = () => {
                     <form>
                         <div className='form-group mb-2'>
                             <label className='form-label'>Todo Title:</label>
-                            <input type='text' placeholder='Enter Todo Title' name='title' 
-                            className='form-control'
-                            value={title} onChange={(e) => setTitle(e.target.value)}/>
-
-                            <label className='form-label'>Todo Description:</label>
-                            <input type='text' placeholder='Enter Todo Description' name='description'
-                            className='form-control'
-                            value={description} onChange={(e) => setDescription(e.target.value)}/>
-
-                            <label className='form-label'>Todo Completed:</label>
-                            <select 
-                               className='form-control'
-                               value={completed}
-                               onChange={(e)=>setCompleted(e.target.value)}
-                            >
-                                <option value={true}>YES</option>
-                                <option value={false}>NO</option>
-
-                            </select>
-
+                            <input 
+                                type='text' 
+                                placeholder='Enter Todo Title' 
+                                name='title' 
+                                className='form-control' 
+                                value={title} onChange={(e) => setTitle(e.target.value)} 
+                            />
                         </div>
 
-                        <button className='btn btn-success' onClick={(e)=>saveOrUpdateTodo(e)}>Submit</button>
+                        <div className='form-group mb-2'>
+                            <label className='form-label'>Todo Description:</label>
+                            <input 
+                                type='text' 
+                                placeholder='Enter Todo Description' 
+                                name='description' 
+                                className='form-control' 
+                                value={description} onChange={(e) => setDescription(e.target.value)} 
+                            />
+                        </div>
+
+                        <div className='form-group mb-2'>
+                            <label className='form-label'>Todo Completed:</label>
+                            <select
+                                className='form-control'
+                                value={completed}
+                                onChange={(e) => setCompleted(e.target.value)}
+                            >
+                                <option value='false'>No</option>
+                                <option value='true'>Yes</option>
+                            </select>
+                        </div>
+
+                        <button className='btn btn-success' onClick={(e)=> saveOrUpdateTodo(e)}>Add Todo</button>
                     </form>
 
                 </div>
